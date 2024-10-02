@@ -67,3 +67,8 @@ val theme_dark_scrim = Color                    (0xFF000000)
 
 
 val seed = Color                                (0xFFDD589A)
+
+val LowPriority = Color.Green
+val MediumPriority = Color.Yellow
+val HighPriority = Color.Red
+val NoPriority = Color.Gray
