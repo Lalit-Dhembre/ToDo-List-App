@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.todolist.Model.Tasks
-import com.example.todolist.Utils.DATABASE_TABLE
+import com.example.todolist.Utils.Constants.DATABASE_TABLE
 
 @Dao
 interface Dao {
