@@ -1,8 +1,11 @@
 package com.example.todolist.Model
 
 import com.example.todolist.Room.Dao
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 
-class Repository(private val dao: Dao) {
+@ViewModelScoped
+class Repository @Inject constructor(private val dao: Dao) {
     suspend fun getTasks(): List<Tasks> = dao.getAllTasks()
     suspend fun sortAsc(): List<Tasks> = dao.sortLowToHigh()
     suspend fun sortDes(): List<Tasks> = dao.sortHighToLow()
