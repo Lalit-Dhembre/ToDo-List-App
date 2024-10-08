@@ -8,6 +8,7 @@ import com.example.todolist.Utils.Constants.DATABASE_TABLE
 data class Tasks(
     @PrimaryKey(autoGenerate = true)
     val id : Int,
-    val Task : String,
+    val title : String,
+    val description : String,
     val priority: Priority
 )

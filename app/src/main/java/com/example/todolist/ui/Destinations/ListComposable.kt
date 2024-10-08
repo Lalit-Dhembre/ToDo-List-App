@@ -7,7 +7,7 @@ import androidx.navigation.navArgument
 import com.example.todolist.Utils.Constants.LIST_ARGUMENT_KEY
 import com.example.todolist.Utils.Constants.LIST_SCREEN
 import com.example.todolist.ui.Viewmodel.SharedViewmodel
-import com.example.todolist.ui.screens.ListScreen
+import com.example.todolist.ui.screens.ListScreen.ListScreen
 
 fun NavGraphBuilder.listComposable(
     navigateToTaskScreen: (Int) -> Unit,
