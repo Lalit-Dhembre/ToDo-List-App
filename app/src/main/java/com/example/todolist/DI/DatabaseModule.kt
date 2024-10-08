@@ -3,7 +3,7 @@ package com.example.todolist.DI
 import android.content.Context
 import androidx.room.Room
 import com.example.todolist.Room.TasksDatabase
-import com.example.todolist.Utils.Constants.DATABASE_NAME
+import com.example.todolist.Utils.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
