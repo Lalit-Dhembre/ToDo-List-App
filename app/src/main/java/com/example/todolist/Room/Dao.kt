@@ -7,31 +7,32 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.todolist.Model.Tasks
 import com.example.todolist.Utils.Constants.DATABASE_TABLE
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface Dao {
 
     @Insert
-    suspend fun addTask(Task : Tasks) : List<Tasks>
+    suspend fun addTask(Task : Tasks)
 
     @Update
-    suspend fun updateTask(Task: Tasks) : List<Tasks>
+    suspend fun updateTask(Task: Tasks)
 
     @Delete
-    suspend fun deleteTask(Task: Tasks) : List<Tasks>
+    suspend fun deleteTask(Task: Tasks)
 
-    @Query("Delete from ${DATABASE_TABLE}")
+    @Query("Delete from $DATABASE_TABLE")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM ${DATABASE_TABLE}")
+    @Query("SELECT * FROM $DATABASE_TABLE")
     suspend fun getAllTasks() : List<Tasks>
 
-    @Query("SELECT * FROM ${DATABASE_TABLE} ORDER BY CASE WHEN priority LIKE 'H%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END")
+    @Query("SELECT * FROM $DATABASE_TABLE ORDER BY CASE WHEN priority LIKE 'H%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END")
     suspend fun sortHighToLow() : List<Tasks>
 
-    @Query("SELECT * FROM ${DATABASE_TABLE} ORDER BY CASE WHEN priority LIKE 'L%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'H%' THEN 3 END")
+    @Query("SELECT * FROM $DATABASE_TABLE ORDER BY CASE WHEN priority LIKE 'L%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'H%' THEN 3 END")
     suspend fun sortLowToHigh() : List<Tasks>
 
-    @Query("SELECT * FROM ${DATABASE_TABLE} WHERE id = :taskId")
+    @Query("SELECT * FROM $DATABASE_TABLE WHERE id = :taskId")
     suspend fun getTask(taskId: Int): List<Tasks>
 }

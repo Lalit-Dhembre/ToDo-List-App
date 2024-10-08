@@ -10,9 +10,18 @@ class Repository @Inject constructor(private val dao: Dao) {
     suspend fun sortAsc(): List<Tasks> = dao.sortLowToHigh()
     suspend fun sortDes(): List<Tasks> = dao.sortHighToLow()
 
-    suspend fun addTask(task: Tasks):List<Tasks> = dao.addTask(task)
-    suspend fun deleteTask(task: Tasks):List<Tasks> = dao.deleteTask(task)
-    suspend fun updateTask(task: Tasks):List<Tasks> = dao.updateTask(task)
+    suspend fun addTask(task: Tasks):List<Tasks>{
+        dao.addTask(task)
+        return dao.getAllTasks()
+    }
+    suspend fun deleteTask(task: Tasks):List<Tasks>{
+        dao.deleteTask(task)
+        return dao.getAllTasks()
+    }
+    suspend fun updateTask(task: Tasks):List<Tasks>{
+        dao.updateTask(task)
+        return dao.getAllTasks()
+    }
 
     suspend fun getTask(taskId: Int):List<Tasks> = dao.getTask(taskId)
     suspend fun deleteAll() = dao.deleteAll()
