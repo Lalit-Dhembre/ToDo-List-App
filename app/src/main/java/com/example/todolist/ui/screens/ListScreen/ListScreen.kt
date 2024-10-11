@@ -3,6 +3,7 @@ package com.example.todolist.ui.screens.ListScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -19,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.todolist.Model.Priority
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.Close
@@ -28,6 +31,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +44,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import com.example.todolist.R
 import com.example.todolist.Utils.SearchAppBarStates
 import com.example.todolist.ui.Components.DeleteAllAction
@@ -53,6 +59,10 @@ fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
     sharedViewmodel: SharedViewmodel
 ){
+    LaunchedEffect(key1 = true) {
+        sharedViewmodel.getAllTasks()
+    }
+    val allTasks by sharedViewmodel.allTasks.collectAsState()
     Scaffold(
         topBar = {
             val searchAppBarState : SearchAppBarStates by sharedViewmodel.searchAppBarStates
@@ -83,10 +93,11 @@ fun ListScreen(
                 SearchAppBarStates.TRIGGERED -> {}
                 }
             },
-        floatingActionButton = { floatingAction(navigateToTaskScreen) },
-        content = {
-            ListContent()
-        }
+        content = {padding->ListContent(
+            modifier = Modifier.consumeWindowInsets(padding),
+            paddingValues = padding,
+            tasks = allTasks,
+            navigateToTaskScreen = navigateToTaskScreen)},
+        floatingActionButton = { floatingAction(navigateToTaskScreen) } )
 
-    )
 }
