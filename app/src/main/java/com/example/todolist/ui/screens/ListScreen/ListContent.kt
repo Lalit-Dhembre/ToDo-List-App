@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Tasks
+import com.example.todolist.Utils.RequestState
 import com.example.todolist.ui.Components.EmptyContent
 
 @Composable
@@ -36,29 +38,31 @@ fun ListContent(
     paddingValues: PaddingValues,
     modifier: Modifier,
 
-    tasks:List<Tasks>,
+    tasks:RequestState<List<Tasks>>,
     navigateToTaskScreen : (taskId: Int) -> Unit
-){
-    if(tasks.isEmpty()){
-        EmptyContent()
-    }
-    else {
-        LazyColumn(
-            contentPadding = paddingValues
-        ) {
-            items(
-                items = tasks,
-                key = { task ->
-                    task.id
+) {
+    if (tasks is RequestState.Success) {
+        if (tasks.data.isEmpty()) {
+            EmptyContent()
+        } else {
+            LazyColumn(
+                contentPadding = paddingValues
+            ) {
+                items(
+                    items = tasks.data,
+                    key = { task ->
+                        task.id
+                    }
+                ) { item: Tasks ->
+                    TaskItem(
+                        task = item,
+                        navigateToTaskScreen = navigateToTaskScreen
+                    )
                 }
-            ) { item: Tasks ->
-                TaskItem(
-                    task = item,
-                    navigateToTaskScreen = navigateToTaskScreen
-                )
             }
         }
     }
+
 }
 
 @Composable
