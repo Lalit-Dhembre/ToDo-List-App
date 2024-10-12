@@ -2,6 +2,7 @@ package com.example.todolist.Model
 
 import com.example.todolist.Room.Dao
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -23,6 +24,6 @@ class Repository @Inject constructor(private val dao: Dao) {
         return dao.getAllTasks()
     }
 
-    suspend fun getTask(taskId: Int):List<Tasks> = dao.getTask(taskId)
+    fun getTask(taskId: Int): Flow<Tasks> { return dao.getTask(taskId)}
     suspend fun deleteAll() = dao.deleteAll()
 }

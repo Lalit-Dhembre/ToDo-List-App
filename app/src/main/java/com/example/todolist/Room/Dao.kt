@@ -34,5 +34,5 @@ interface Dao {
     suspend fun sortLowToHigh() : List<Tasks>
 
     @Query("SELECT * FROM $DATABASE_TABLE WHERE id = :taskId")
-    suspend fun getTask(taskId: Int): List<Tasks>
+    fun getTask(taskId: Int): Flow<Tasks>
 }
