@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.todolist.Utils.Constants
 import com.example.todolist.Utils.Constants.LIST_SCREEN
 import com.example.todolist.ui.Destinations.listComposable
 import com.example.todolist.ui.Destinations.taskComposable
@@ -20,7 +21,7 @@ fun SetUpnavigation(
 
     NavHost(
         navController = navHostController,
-        startDestination = "list/ADD") {
+        startDestination = "list/NO_ACTION") {
                 listComposable(
                     navigateToTaskScreen = screen.task,
                     sharedViewmodel = sharedViewmodel

@@ -95,35 +95,35 @@ fun PriorityDropDown(
             modifier = Modifier.fillMaxWidth(),
             expanded = expanded,
             onDismissRequest = { expanded = false }) {
-            DropItem(name = Priority.HIGH.name, color = Priority.HIGH.color)
-            DropItem(name = Priority.MEDIUM.name, color = Priority.MEDIUM.color)
-            DropItem(name = Priority.LOW.name, color = Priority.LOW.color)
-            DropItem(name = Priority.NONE.name, color = Priority.NONE.color)
+            DropItem(Priority.LOW,onPrioritySelected)
+            DropItem(Priority.MEDIUM,onPrioritySelected)
+            DropItem(Priority.HIGH,onPrioritySelected)
+            DropItem(Priority.NONE,onPrioritySelected)
         }
     }
 
 }
 @Composable
 fun DropItem(
-     name:String,
-     color: Color,
+    priority: Priority,
+    onPrioritySelected: (Priority) -> Unit
 ){
     DropdownMenuItem(
         text = {
             Row {
                 Text(
-                    text = name,
+                    text = priority.name,
                     modifier = Modifier.weight(3f))
                 Canvas(modifier = Modifier
                     .size(20.dp)
                     .weight(1f), contentDescription = "priority") {
                     drawCircle(
-                        color = color
+                        color = priority.color
                     )
                 }
             }
         },
-        onClick = { /*TODO*/ })
+        onClick = { onPrioritySelected(priority) })
 
 }
 

@@ -9,7 +9,7 @@ class Screens(
     val navHostController: NavHostController) {
     val list: (Action) -> Unit = {action ->
         navHostController.navigate(route = "list/${action.name}"){
-            popUpTo(LIST_SCREEN){inclusive = true}
+            popUpTo("list/NO_ACTION"){inclusive = true}
         }
     }
 

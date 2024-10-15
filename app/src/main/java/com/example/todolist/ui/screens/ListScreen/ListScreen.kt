@@ -62,6 +62,9 @@ fun ListScreen(
     LaunchedEffect(key1 = true) {
         sharedViewmodel.getAllTasks()
     }
+    val action by sharedViewmodel.action
+    sharedViewmodel.handleDatabaseActions(action)
+
     val allTasks by sharedViewmodel.allTasks.collectAsState()
     Scaffold(
         topBar = {

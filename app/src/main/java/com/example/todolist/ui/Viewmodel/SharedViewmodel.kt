@@ -9,9 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Repository
 import com.example.todolist.Model.Tasks
+import com.example.todolist.Navigation.Action
 import com.example.todolist.Utils.RequestState
 import com.example.todolist.Utils.SearchAppBarStates
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -29,13 +32,15 @@ class SharedViewmodel @Inject constructor(
 
     val allTasks:StateFlow<RequestState<List<Tasks>>> = _allTasks
 
-
+    val action = mutableStateOf(Action.NO_ACTION)
 
     fun getAllTasks(){
+        _allTasks.value = RequestState.Loading
         try {
             viewModelScope.launch {
-                val tasks = repository.getTasks()
-                _allTasks.value = RequestState.Success(tasks)
+                repository.getAllTasks.collect{
+                    _allTasks.value = RequestState.Success(it)
+                }
             }
         }catch (err: Exception){
             _allTasks.value = RequestState.Error(err)
@@ -48,7 +53,7 @@ class SharedViewmodel @Inject constructor(
 
     fun getSelectedTask(taskId:Int){
         viewModelScope.launch {
-            repository.getTask(taskId).collect() { task ->
+            repository.getSelectedTask(taskId).collect() { task ->
                 _selectedTask.value = task
                 Log.d("debug1",taskId.toString())
             }
@@ -73,4 +78,48 @@ class SharedViewmodel @Inject constructor(
                 priority.value = Priority.LOW
             }
         }
+
+    fun maxLimit(text:String){
+        if(text.length < 20){
+            title.value = text
+        }
+    }
+
+    fun validateFields():Boolean{
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
+    }
+
+    fun addTask(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val task = Tasks(
+                title = title.value,
+                description = description.value,
+                priority = priority.value
+            )
+            repository.addTask(task)
+        }
+    }
+    fun handleDatabaseActions(action: Action){
+        when(action){
+            Action.ADD ->{
+                addTask()
+            }
+            Action.UPDATE ->{
+
+            }
+            Action.DELETE ->{
+
+            }
+            Action.DELETE_ALL ->{
+
+            }
+            Action.UNDO ->{
+
+            }
+            else ->{
+                Action.NO_ACTION
+            }
+        }
+    }
+
     }

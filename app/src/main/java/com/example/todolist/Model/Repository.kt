@@ -7,23 +7,30 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class Repository @Inject constructor(private val dao: Dao) {
-    suspend fun getTasks(): List<Tasks> = dao.getAllTasks()
-    suspend fun sortAsc(): List<Tasks> = dao.sortLowToHigh()
-    suspend fun sortDes(): List<Tasks> = dao.sortHighToLow()
-
-    suspend fun addTask(task: Tasks):List<Tasks>{
-        dao.addTask(task)
-        return dao.getAllTasks()
-    }
-    suspend fun deleteTask(task: Tasks):List<Tasks>{
-        dao.deleteTask(task)
-        return dao.getAllTasks()
-    }
-    suspend fun updateTask(task: Tasks):List<Tasks>{
-        dao.updateTask(task)
-        return dao.getAllTasks()
+    val getAllTasks: Flow<List<Tasks>> = dao.getAllTasks()
+    val sortByLowPriority: Flow<List<Tasks>> = dao.sortLowToHigh()
+    val sortByHighPriority: Flow<List<Tasks>> = dao.sortHighToLow()
+    fun getSelectedTask(taskId: Int): Flow<Tasks> {
+        return dao.getTask(taskId = taskId)
     }
 
-    fun getTask(taskId: Int): Flow<Tasks> { return dao.getTask(taskId)}
-    suspend fun deleteAll() = dao.deleteAll()
+    suspend fun addTask(task: Tasks) {
+        dao.addTask(Task = task)
+    }
+
+    suspend fun updateTask(task: Tasks) {
+        dao.updateTask(Task = task)
+    }
+
+    suspend fun deleteTask(task: Tasks) {
+        dao.deleteTask(Task = task)
+    }
+
+    suspend fun deleteAllTasks() {
+        dao.deleteAll()
+    }
+
+    fun searchDatabase(searchQuery: String): Flow<List<Tasks>> {
+        return dao.searchDatabase(searchQuery = searchQuery)
+    }
 }

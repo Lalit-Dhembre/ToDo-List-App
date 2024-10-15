@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Tasks
 import com.example.todolist.Navigation.Action
+import com.example.todolist.ui.Viewmodel.SharedViewmodel
 
 @Composable
 fun TaskScreenAppBar(
@@ -111,7 +112,9 @@ fun UpdateTaskBar(
 fun AddAction(
     addActionClicked : (Action) -> Unit
 ){
-    IconButton(onClick = { addActionClicked(Action.ADD) }) {
+    IconButton(onClick = {
+        addActionClicked(Action.ADD)
+    }) {
         Icon(
             imageVector = Icons.Filled.Check,
             contentDescription = "Add Tasks",
@@ -123,7 +126,7 @@ fun AddAction(
 fun DeleteAction(
     deleteActionClicked : (Action) -> Unit
 ){
-    IconButton(onClick = { deleteActionClicked(Action.ADD) }) {
+    IconButton(onClick = { deleteActionClicked(Action.DELETE) }) {
         Icon(
             imageVector = Icons.Filled.Delete,
             contentDescription = "Delete Tasks",
@@ -135,7 +138,7 @@ fun DeleteAction(
 fun UpdateAction(
     updateActionClicked : (Action) -> Unit
 ){
-    IconButton(onClick = { updateActionClicked(Action.ADD) }) {
+    IconButton(onClick = { updateActionClicked(Action.UPDATE) }) {
         Icon(
             imageVector = Icons.Filled.CheckCircle,
             contentDescription = "Delete Tasks",

@@ -47,8 +47,8 @@ fun TaskContent(
             label = { Text(text = "Title")})
         Spacer(modifier = Modifier.height(5.dp))
         PriorityDropDown(
-            priority = priority,
-            onPrioritySelected = onPriorityChange)
+            priority = sharedViewmodel.priority.value,
+            onPrioritySelected = {it -> sharedViewmodel.priority.value = it})
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
             value = description,
