@@ -17,6 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -24,6 +28,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import com.example.todolist.Model.Priority
+import com.example.todolist.ui.Components.AlertDialog
 import com.example.todolist.ui.Components.DeleteAllAction
 import com.example.todolist.ui.Components.SearchAction
 import com.example.todolist.ui.Components.SortAction
@@ -46,11 +51,34 @@ fun DefaultAppBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary
         ),
         actions = {
-            SearchAction(onSearchClicked = onSearchClicked)
-            SortAction(onSortClicked = onSortClicked)
-            DeleteAllAction(onDeleteClicked = onDeleteClicked)
+            ListAppBarActions(
+                onSearchClicked = onSearchClicked,
+                onDeleteClicked = onDeleteClicked,
+                onSortClicked = onSortClicked)
         }
     )
+}
+
+@Composable
+fun ListAppBarActions(
+    onSearchClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onSortClicked: (Priority) -> Unit
+){
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+    AlertDialog(
+        title = "Delete All Tasks",
+        message = "There is no going back after deleting all!",
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        onYesClicked = {onDeleteClicked()})
+
+    SearchAction(onSearchClicked = onSearchClicked)
+    SortAction(onSortClicked = onSortClicked)
+    DeleteAllAction(onDeleteClicked = {openDialog = true})
 }
 
 @Composable

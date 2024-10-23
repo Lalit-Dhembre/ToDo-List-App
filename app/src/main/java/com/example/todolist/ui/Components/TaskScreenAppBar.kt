@@ -14,11 +14,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Tasks
 import com.example.todolist.Navigation.Action
+import com.example.todolist.R
 import com.example.todolist.ui.Viewmodel.SharedViewmodel
 
 @Composable
@@ -93,8 +99,7 @@ fun UpdateTaskBar(
                 overflow = TextOverflow.Ellipsis)
         },
         actions = {
-            DeleteAction(deleteActionClicked = navigateToListScreen)
-            UpdateAction(updateActionClicked = navigateToListScreen)
+           ExistingAppBar(selectedTasks = selectedTasks, navigateToListScreen)
         },
         colors = TopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -121,12 +126,31 @@ fun AddAction(
             tint = MaterialTheme.colorScheme.onPrimary)
     }
 }
+@Composable
+fun ExistingAppBar(
+    selectedTasks: Tasks,
+    navigateToListScreen: (Action) -> Unit
+){
+    var opendialog by remember {
+        mutableStateOf(false)
+    }
+    AlertDialog(
+        title = stringResource(id = R.string.delete_task, selectedTasks.title),
+        message = stringResource(id = R.string.delete_msg, selectedTasks.title),
+        openDialog = opendialog,
+        closeDialog = { opendialog = false },
+        onYesClicked = {navigateToListScreen(Action.DELETE)})
+    DeleteAction(deleteActionClicked = {
+        opendialog = true
+    })
+    UpdateAction(updateActionClicked = navigateToListScreen)
+}
 
 @Composable
 fun DeleteAction(
-    deleteActionClicked : (Action) -> Unit
+    deleteActionClicked : () -> Unit
 ){
-    IconButton(onClick = { deleteActionClicked(Action.DELETE) }) {
+    IconButton(onClick = { deleteActionClicked() }) {
         Icon(
             imageVector = Icons.Filled.Delete,
             contentDescription = "Delete Tasks",
