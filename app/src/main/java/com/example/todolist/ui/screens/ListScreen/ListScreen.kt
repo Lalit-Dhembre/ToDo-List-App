@@ -74,7 +74,7 @@ fun ListScreen(
                   DefaultAppBar(
                 onSearchClicked = {sharedViewmodel.searchAppBarStates.value = SearchAppBarStates.OPENED },
                 onSortClicked = {},
-                onDeleteClicked = {}
+                onDeleteClicked = { sharedViewmodel.deleteAllTasks()}
             )
               }
                 SearchAppBarStates.OPENED -> {
