@@ -1,5 +1,7 @@
 package com.example.todolist.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val theme_light_primary = Color                 (0xFF951b60)
@@ -72,3 +74,5 @@ val LowPriority = Color.Green
 val MediumPriority = Color.Yellow
 val HighPriority = Color.Red
 val NoPriority = Color.Gray
+
+

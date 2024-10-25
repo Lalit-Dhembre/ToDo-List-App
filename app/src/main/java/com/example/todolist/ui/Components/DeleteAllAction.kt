@@ -29,7 +29,9 @@ fun DeleteAllAction(
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
                 text = { Text(text = "Delete All") },
-                onClick = { onDeleteClicked() })
+                onClick = {
+                    onDeleteClicked()
+                    expanded = !expanded})
         }
     }
 }

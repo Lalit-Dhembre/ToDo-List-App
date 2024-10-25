@@ -34,6 +34,12 @@ class SharedViewmodel @Inject constructor(
 
     val action = mutableStateOf(Action.NO_ACTION)
 
+    private val _expanded = MutableStateFlow<Boolean>(false)
+    var expanded:StateFlow<Boolean> = _expanded
+    fun toggleDropdown() {
+        _expanded.value = !_expanded.value
+    }
+
     fun getAllTasks(){
         _allTasks.value = RequestState.Loading
         try {
@@ -112,7 +118,12 @@ class SharedViewmodel @Inject constructor(
                 description = description.value,
                 priority = priority.value
             )
+            if(task.title.isBlank()){
+                action.value = Action.NO_ACTION
+            }
+            else{
             repository.addTask(task)
+            }
         }
     }
 

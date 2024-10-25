@@ -45,6 +45,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.todolist.Model.Tasks
+import com.example.todolist.Navigation.Action
 import com.example.todolist.R
 import com.example.todolist.Utils.SearchAppBarStates
 import com.example.todolist.ui.Components.DeleteAllAction
@@ -57,7 +59,7 @@ import com.example.todolist.ui.Viewmodel.SharedViewmodel
 @Composable
 fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
-    sharedViewmodel: SharedViewmodel
+    sharedViewmodel: SharedViewmodel,
 ){
     LaunchedEffect(key1 = true) {
         sharedViewmodel.getAllTasks()
@@ -100,6 +102,10 @@ fun ListScreen(
             modifier = Modifier.consumeWindowInsets(padding),
             paddingValues = padding,
             tasks = allTasks,
+            onSwipetoDelete = {action, task ->
+                sharedViewmodel.action.value = action
+                sharedViewmodel.updateFields(task = task)
+            },
             navigateToTaskScreen = navigateToTaskScreen)},
         floatingActionButton = { floatingAction(navigateToTaskScreen) } )
 
