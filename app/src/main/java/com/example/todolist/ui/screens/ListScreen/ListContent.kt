@@ -58,6 +58,7 @@ import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Tasks
 import com.example.todolist.Navigation.Action
 import com.example.todolist.Utils.RequestState
+import com.example.todolist.Utils.SearchAppBarStates
 import com.example.todolist.ui.Components.EmptyContent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -69,70 +70,93 @@ fun ListContent(
     modifier: Modifier,
     onSwipetoDelete : (Action, Tasks) -> Unit,
     tasks:RequestState<List<Tasks>>,
+    searchedTasks: RequestState<List<Tasks>>,
+    searchAppBarStates: SearchAppBarStates,
     navigateToTaskScreen : (taskId: Int) -> Unit
 ) {
-    if (tasks is RequestState.Success) {
-        if (tasks.data.isEmpty()) {
-            EmptyContent()
-        } else {
-            LazyColumn(
-                contentPadding = paddingValues
-            ) {
-                items(
-                    items = tasks.data,
-                    key = { task ->
-                        task.id
-                    }
-                ) { item: Tasks ->
-                    val dismissBoxState = rememberSwipeToDismissBoxState()
-                    val dismisDirection = dismissBoxState.dismissDirection
-                    val isDismissed = dismissBoxState.dismissDirection == SwipeToDismissBoxValue.EndToStart && dismissBoxState.progress == 1f
-                    if(isDismissed && dismisDirection == SwipeToDismissBoxValue.EndToStart){
-                        val scope = rememberCoroutineScope()
-                        SideEffect {
-                            scope.launch {
-                                onSwipetoDelete(Action.DELETE,item)
-                            }
-                        }
-                    }
-                    val degrees by animateFloatAsState(
-                        if (dismissBoxState.progress in 0f..0.5f) 0f else -45f,
-                        label = "Degree animation")
-
-                    var itemAppeared by remember {
-                        mutableStateOf(false)
-                    }
-                    LaunchedEffect(key1 = true) {
-                        itemAppeared = true
-                    }
-                    AnimatedVisibility(visible = itemAppeared && !isDismissed,
-                        enter = expandVertically(
-                            animationSpec = tween(
-                                durationMillis = 200
-                            )
-                        ),
-                        exit = shrinkVertically(
-                            animationSpec = tween(
-                                durationMillis = 200
-                            )
-                        )
-                    ) {
-                        SwipeToDismissBox(
-                            state = dismissBoxState,
-                            backgroundContent = { RedBackground(degrees = degrees)},
-                            enableDismissFromEndToStart = true) {
-                            TaskItem(
-                                task = item,
-                                navigateToTaskScreen = navigateToTaskScreen)
-                        }
-                    }
-
-                }
-            }
+    if(searchAppBarStates == SearchAppBarStates.TRIGGERED){
+        if(searchedTasks is RequestState.Success){
+            HandleListContent(tasks = searchedTasks.data, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
+        }
+    }
+    else{
+        if(tasks is RequestState.Success){
+            HandleListContent(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
         }
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HandleListContent(
+    tasks: List<Tasks>,
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    paddingValues: PaddingValues,
+    onSwipetoDelete : (Action, Tasks) -> Unit,
+
+    ){
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        LazyColumn(
+            contentPadding = paddingValues
+        ) {
+            items(
+                items = tasks,
+                key = { task ->
+                    task.id
+                }
+            ) { item: Tasks ->
+                val dismissBoxState = rememberSwipeToDismissBoxState()
+                val dismisDirection = dismissBoxState.dismissDirection
+                val isDismissed = dismissBoxState.dismissDirection == SwipeToDismissBoxValue.EndToStart && dismissBoxState.progress == 1f
+                if(isDismissed && dismisDirection == SwipeToDismissBoxValue.EndToStart){
+                    val scope = rememberCoroutineScope()
+                    SideEffect {
+                        scope.launch {
+                            onSwipetoDelete(Action.DELETE,item)
+                        }
+                    }
+                }
+                val degrees by animateFloatAsState(
+                    if (dismissBoxState.progress in 0f..0.5f) 0f else -45f,
+                    label = "Degree animation")
+
+                var itemAppeared by remember {
+                    mutableStateOf(false)
+                }
+                LaunchedEffect(key1 = true) {
+                    itemAppeared = true
+                }
+                AnimatedVisibility(visible = itemAppeared && !isDismissed,
+                    enter = expandVertically(
+                        animationSpec = tween(
+                            durationMillis = 200
+                        )
+                    ),
+                    exit = shrinkVertically(
+                        animationSpec = tween(
+                            durationMillis = 200
+                        )
+                    )
+                ) {
+                    SwipeToDismissBox(
+                        state = dismissBoxState,
+                        backgroundContent = { RedBackground(degrees = degrees)},
+                        enableDismissFromEndToStart = true) {
+                        TaskItem(
+                            task = item,
+                            navigateToTaskScreen = navigateToTaskScreen)
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun RedBackground(degrees : Float){

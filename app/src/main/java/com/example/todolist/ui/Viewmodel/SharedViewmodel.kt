@@ -51,6 +51,7 @@ class SharedViewmodel @Inject constructor(
         }catch (err: Exception){
             _allTasks.value = RequestState.Error(err)
         }
+        searchAppBarStates.value = SearchAppBarStates.CLOSED
     }
     private val _searchedTasks = MutableStateFlow<RequestState<List<Tasks>>>(RequestState.Idle)
     val searchTasks : StateFlow<RequestState<List<Tasks>>> = _searchedTasks
@@ -59,7 +60,7 @@ class SharedViewmodel @Inject constructor(
         _searchedTasks.value  = RequestState.Loading
         try {
             viewModelScope.launch {
-                repository.searchDatabase(searchQuery).collect{it->
+                repository.searchDatabase("%$searchQuery%").collect{it->
                     _searchedTasks.value = RequestState.Success(it)
                 }
             }

@@ -66,20 +66,21 @@ fun ListScreen(
     }
     val action by sharedViewmodel.action
     sharedViewmodel.handleDatabaseActions(action)
+    val searchedTasks by sharedViewmodel.searchTasks.collectAsState()
 
     val allTasks by sharedViewmodel.allTasks.collectAsState()
     Scaffold(
         topBar = {
             val searchAppBarState : SearchAppBarStates by sharedViewmodel.searchAppBarStates
             when(searchAppBarState){
-              SearchAppBarStates.CLOSED -> {
+              SearchAppBarStates.CLOSED-> {
                   DefaultAppBar(
-                onSearchClicked = {sharedViewmodel.searchAppBarStates.value = SearchAppBarStates.OPENED },
+                onSearchClicked = {sharedViewmodel.searchAppBarStates.value = SearchAppBarStates.OPENED  },
                 onSortClicked = {},
                 onDeleteClicked = { sharedViewmodel.deleteAllTasks()}
             )
               }
-                SearchAppBarStates.OPENED -> {
+                SearchAppBarStates.OPENED,SearchAppBarStates.TRIGGERED -> {
                     SearchTopBar(
                         text = sharedViewmodel.searchTextState.value,
                         onTextChange = { sharedViewmodel.searchTextState.value = it},
@@ -92,10 +93,11 @@ fun ListScreen(
                                 sharedViewmodel.searchTextState.value = ""
                             }
                             },
-                        onSearchClicked = {})
+                        onSearchClicked = {
+                            sharedViewmodel.searchDatabase(searchQuery = it)
+                        })
 
                 }
-                SearchAppBarStates.TRIGGERED -> {}
                 }
             },
         content = {padding->ListContent(
@@ -106,7 +108,9 @@ fun ListScreen(
                 sharedViewmodel.action.value = action
                 sharedViewmodel.updateFields(task = task)
             },
-            navigateToTaskScreen = navigateToTaskScreen)},
+            navigateToTaskScreen = navigateToTaskScreen,
+            searchedTasks = searchedTasks,
+            searchAppBarStates = sharedViewmodel.searchAppBarStates.value)},
         floatingActionButton = { floatingAction(navigateToTaskScreen) } )
 
 }
