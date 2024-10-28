@@ -63,10 +63,14 @@ fun ListScreen(
 ){
     LaunchedEffect(key1 = true) {
         sharedViewmodel.getAllTasks()
+        sharedViewmodel.readSortState()
     }
     val action by sharedViewmodel.action
     sharedViewmodel.handleDatabaseActions(action)
     val searchedTasks by sharedViewmodel.searchTasks.collectAsState()
+    val sortState by sharedViewmodel.sortState.collectAsState()
+    val lowPriorityTask by sharedViewmodel.lowPriorityTasks.collectAsState()
+    val highPriorityTask by sharedViewmodel.highPriorityTasks.collectAsState()
 
     val allTasks by sharedViewmodel.allTasks.collectAsState()
     Scaffold(
@@ -76,7 +80,7 @@ fun ListScreen(
               SearchAppBarStates.CLOSED-> {
                   DefaultAppBar(
                 onSearchClicked = {sharedViewmodel.searchAppBarStates.value = SearchAppBarStates.OPENED  },
-                onSortClicked = {},
+                onSortClicked = {sharedViewmodel.persistSortingState(priority = it)},
                 onDeleteClicked = { sharedViewmodel.deleteAllTasks()}
             )
               }
@@ -110,7 +114,10 @@ fun ListScreen(
             },
             navigateToTaskScreen = navigateToTaskScreen,
             searchedTasks = searchedTasks,
-            searchAppBarStates = sharedViewmodel.searchAppBarStates.value)},
+            searchAppBarStates = sharedViewmodel.searchAppBarStates.value,
+            sortState = sortState,
+            lowPriorityTasks = lowPriorityTask,
+            highPriorityTasks = highPriorityTask)},
         floatingActionButton = { floatingAction(navigateToTaskScreen) } )
 
 }

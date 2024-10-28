@@ -1,5 +1,6 @@
 package com.example.todolist.ui.screens.ListScreen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -72,18 +73,49 @@ fun ListContent(
     tasks:RequestState<List<Tasks>>,
     searchedTasks: RequestState<List<Tasks>>,
     searchAppBarStates: SearchAppBarStates,
-    navigateToTaskScreen : (taskId: Int) -> Unit
+    navigateToTaskScreen : (taskId: Int) -> Unit,
+    sortState: RequestState<Priority>,
+    lowPriorityTasks : List<Tasks>,
+    highPriorityTasks : List<Tasks>
 ) {
-    if(searchAppBarStates == SearchAppBarStates.TRIGGERED){
-        if(searchedTasks is RequestState.Success){
-            HandleListContent(tasks = searchedTasks.data, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
+    Log.d("LOW TASKS","$lowPriorityTasks")
+    if(sortState is RequestState.Success) {
+        when {
+            searchAppBarStates == SearchAppBarStates.TRIGGERED -> {
+                    if (searchedTasks is RequestState.Success) {
+                        HandleListContent(
+                            tasks = searchedTasks.data,
+                            navigateToTaskScreen = navigateToTaskScreen,
+                            paddingValues = paddingValues,
+                            onSwipetoDelete
+                        )
+                    }
+            }
+            sortState.data == Priority.NONE -> {
+                if (tasks is RequestState.Success) {
+                    HandleListContent(
+                        tasks = tasks.data,
+                        navigateToTaskScreen = navigateToTaskScreen,
+                        paddingValues = paddingValues,
+                        onSwipetoDelete = onSwipetoDelete
+                    )
+                }
+            }
+            sortState.data == Priority.LOW -> {
+                if(tasks is RequestState.Success){
+                    Log.d("Sort Low","CLICKED")
+                    HandleListContent(tasks = lowPriorityTasks, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
+                }
+            }
+            sortState.data == Priority.HIGH -> {
+                if (tasks is RequestState.Success){
+                    Log.d("SORT HIGH", "CLCIKED")
+                    HandleListContent(tasks = highPriorityTasks, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
+                }
+            }
         }
     }
-    else{
-        if(tasks is RequestState.Success){
-            HandleListContent(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen, paddingValues = paddingValues, onSwipetoDelete)
-        }
-    }
+
 
 }
 

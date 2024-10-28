@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todolist.Model.DataSourceRepository
 import com.example.todolist.Model.Priority
 import com.example.todolist.Model.Repository
 import com.example.todolist.Model.Tasks
@@ -16,13 +17,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewmodel @Inject constructor(
-    private val repository: Repository
+    private val repository: Repository,
+    private val datastore: DataSourceRepository
 ): ViewModel() {
 
    public val searchAppBarStates = mutableStateOf(SearchAppBarStates.CLOSED)
@@ -38,6 +44,40 @@ class SharedViewmodel @Inject constructor(
     var expanded:StateFlow<Boolean> = _expanded
     fun toggleDropdown() {
         _expanded.value = !_expanded.value
+    }
+
+    fun persistSortingState(priority: Priority){
+        viewModelScope.launch(Dispatchers.IO) {
+            datastore.persistSortState(priority)
+        }
+    }
+
+    private val _sortState = MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
+    val sortState: StateFlow<RequestState<Priority>> = _sortState
+
+    val lowPriorityTasks: StateFlow<List<Tasks>> =
+        repository.sortByLowPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+    val highPriorityTasks: StateFlow<List<Tasks>> =
+        repository.sortByHighPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+    fun readSortState(){
+        _sortState.value = RequestState.Loading
+        viewModelScope.launch {
+            datastore.readSortState
+                .map { Priority.valueOf(it) }
+                .collect{
+                    _sortState.value = RequestState.Success(it)
+                }
+            Log.d("SortState", _sortState.value.toString())
+        }
     }
 
     fun getAllTasks(){

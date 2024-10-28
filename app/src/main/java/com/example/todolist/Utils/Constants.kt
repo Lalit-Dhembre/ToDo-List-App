@@ -9,6 +9,9 @@ const val DATABASE_TABLE = "Tasks_Table"
     const val LIST_SCREEN = "list/{action}"
     const val TASK_SCREEN = "task/{taskId}"
 
+    const val DATASTORE_PREF = "to_pref"
+    const val DATASTORE_KEY = "to_key"
+
     const val LIST_ARGUMENT_KEY = "action"
     const val TASK_ARGUMENT_KEY = "taskId"}
 
